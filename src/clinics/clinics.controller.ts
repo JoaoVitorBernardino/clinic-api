@@ -1,34 +1,55 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ClinicsService } from './clinics.service';
 import { CreateClinicDto } from './dto/create-clinic.dto';
 import { UpdateClinicDto } from './dto/update-clinic.dto';
+import { ClinicEntity } from './entities/clinic.entity';
 
 @Controller('clinics')
+@ApiTags('Clinics')
 export class ClinicsController {
-  constructor(private readonly clinicsService: ClinicsService) {}
+    constructor(private readonly clinicsService: ClinicsService) { }
 
-  @Post()
-  create(@Body() createClinicDto: CreateClinicDto) {
-    return this.clinicsService.create(createClinicDto);
-  }
+    @Post()
+    @ApiOperation({ summary: 'Route responsible for creating a clinic' })
+    @ApiCreatedResponse({ type: ClinicEntity })
+    @ApiBody({ type: CreateClinicDto })
+    @ApiBearerAuth()
+    create(@Body() createClinicDto: CreateClinicDto) {
+        return this.clinicsService.create(createClinicDto);
+    }
 
-  @Get()
-  findAll() {
-    return this.clinicsService.findAll();
-  }
+    @Get()
+    @ApiOperation({ summary: 'Route responsible for searching all clinics' })
+    @ApiOkResponse({ type: ClinicEntity, isArray: true })
+    @ApiBearerAuth()
+    findAll() {
+        return this.clinicsService.findAll();
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clinicsService.findOne(+id);
-  }
+    @Get(':id')
+    @ApiOperation({ summary: 'Route responsible for searching for a clinic by ID' })
+    @ApiOkResponse({ type: ClinicEntity })
+    @ApiBearerAuth()
+    findOne(@Param('id') id: string) {
+        return this.clinicsService.findOne(id);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClinicDto: UpdateClinicDto) {
-    return this.clinicsService.update(+id, updateClinicDto);
-  }
+    @Patch(':id')
+    @ApiOperation({ summary: 'Route responsible for updating a clinic by ID' })
+    @ApiOkResponse({ type: ClinicEntity })
+    @ApiBody({ type: UpdateClinicDto })
+    @ApiBearerAuth()
+    update(@Param('id') id: string, @Body() updateClinicDto: UpdateClinicDto) {
+        return this.clinicsService.update(id, updateClinicDto);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clinicsService.remove(+id);
-  }
+    @Delete(':id')
+    @ApiOperation({ summary: 'Route responsible for deleting a clinic by ID' })
+    @ApiNoContentResponse()
+    @ApiBearerAuth()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    remove(@Param('id') id: string) {
+        return this.clinicsService.remove(id);
+    }
 }
