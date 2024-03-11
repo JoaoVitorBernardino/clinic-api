@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { ServiceEntinty } from './entities/service.entity';
@@ -13,6 +13,7 @@ export class ServicesController {
     @Post()
     @ApiOperation({ summary: 'Route responsible for creating a service' })
     @ApiCreatedResponse({ type: ServiceEntinty })
+    @ApiBearerAuth()
     create(@Body() createServiceDto: CreateServiceDto) {
         return this.servicesService.create(createServiceDto);
     }
@@ -20,6 +21,7 @@ export class ServicesController {
     @Get()
     @ApiOperation({ summary: 'Route responsible for searching all services' })
     @ApiOkResponse({ type: ServiceEntinty, isArray: true })
+    @ApiBearerAuth()
     findAll() {
         return this.servicesService.findAll();
     }
@@ -27,6 +29,7 @@ export class ServicesController {
     @Get(':id')
     @ApiOperation({ summary: 'Route responsible for searching for a service by ID' })
     @ApiOkResponse({ type: ServiceEntinty })
+    @ApiBearerAuth()
     findOne(@Param('id') id: string) {
         return this.servicesService.findOne(id);
     }
@@ -34,6 +37,7 @@ export class ServicesController {
     @Patch(':id')
     @ApiOperation({ summary: 'Route responsible for updating a service by ID' })
     @ApiOkResponse({ type: ServiceEntinty })
+    @ApiBearerAuth()
     update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
         return this.servicesService.update(id, updateServiceDto);
     }
@@ -41,6 +45,7 @@ export class ServicesController {
     @Delete(':id')
     @ApiOperation({ summary: 'Route responsible for deleting a service by ID' })
     @ApiNoContentResponse()
+    @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
     remove(@Param('id') id: string) {
         return this.servicesService.remove(id);

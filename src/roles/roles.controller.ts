@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleEntity } from './entities/role.entity';
@@ -13,6 +13,7 @@ export class RolesController {
     @Post()
     @ApiOperation({ summary: 'Route responsible for creating a role' })
     @ApiCreatedResponse({ type: RoleEntity })
+    @ApiBearerAuth()
     create(@Body() createRoleDto: CreateRoleDto) {
         return this.rolesService.create(createRoleDto);
     }
@@ -20,6 +21,7 @@ export class RolesController {
     @Get()
     @ApiOperation({ summary: 'Route responsible for searching all roles' })
     @ApiOkResponse({ type: RoleEntity })
+    @ApiBearerAuth()
     findAll() {
         return this.rolesService.findAll();
     }
@@ -27,6 +29,7 @@ export class RolesController {
     @Get(':id')
     @ApiOperation({ summary: 'Route responsible for searching for a role by ID' })
     @ApiOkResponse({ type: RoleEntity })
+    @ApiBearerAuth()
     findOne(@Param('id') id: string) {
         return this.rolesService.findOne(id);
     }
@@ -34,6 +37,7 @@ export class RolesController {
     @Patch(':id')
     @ApiOperation({ summary: 'Route responsible for updating a role by ID' })
     @ApiOkResponse({ type: RoleEntity })
+    @ApiBearerAuth()
     update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
         return this.rolesService.update(id, updateRoleDto);
     }
@@ -41,6 +45,7 @@ export class RolesController {
     @Delete(':id')
     @ApiOperation({ summary: 'Route responsible for deleting a role by ID' })
     @ApiNoContentResponse()
+    @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
     remove(@Param('id') id: string) {
         return this.rolesService.remove(id);
