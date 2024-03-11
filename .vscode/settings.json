@@ -8,4 +8,5 @@
     "editor.detectIndentation": false,
     "editor.tabSize": 4,
     "typescript.tsdk": "node_modules/typescript/lib",
+    "rust-analyzer.checkOnSave": false,
 }
