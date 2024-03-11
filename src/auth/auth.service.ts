@@ -1,37 +1,41 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { compare } from 'bcrypt';
-import { UserEntity } from 'src/users/entities/user.entity';
-import { UsersService } from 'src/users/users.service';
+import { compare, hash } from 'bcrypt';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
     constructor(
-        private readonly usersService: UsersService,
+        private usersService: UsersService,
         private jwtService: JwtService,
     ) { }
 
-    async validateUser(email: string, password: string) {
-        const user = await this.usersService.findOneByEmail(email);
+    async login(username: string, password: string) {
+        const user = await this.usersService.findOneByEmail(username);
 
-        const isPasswordMatch = await compare(password, user.password);
-
-        if (isPasswordMatch) {
-            return await this.generateToken(user);
+        if ((await compare(password, user.password)) == false) {
+            throw new UnauthorizedException();
         }
 
-        throw new UnauthorizedException('invalid email or password');
+        const payload = { email: user.email, sub: user.id };
+
+        return {
+            access_token: await this.jwtService.signAsync(payload),
+        };
     }
 
-    async generateToken(payload: UserEntity) {
-        return {
-            access_token: this.jwtService.sign(
-                { email: payload.email },
-                {
-                    secret: process.env.JWT_SECRET,
-                    expiresIn: '50s',
-                }
-            )
-        };
+    async signUp(signUpDto: CreateUserDto) {
+        signUpDto.password = await this.createHashPassword(signUpDto.password);
+
+        return this.usersService.create(signUpDto);
+    }
+
+    private async createHashPassword(password: string): Promise<string> {
+        const saltRounds = 10;
+
+        const hashedPassword = await hash(password, saltRounds);
+
+        return hashedPassword;
     }
 }

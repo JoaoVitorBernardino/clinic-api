@@ -11,7 +11,7 @@ export class CreateUserDto {
     @ApiProperty()
     password: string;
 
-    @ApiProperty()
+    @ApiProperty({ default: 0 })
     commission: Decimal | null;
 
     @ApiProperty()
