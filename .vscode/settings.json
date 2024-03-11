@@ -1,0 +1,11 @@
+{
+    "material-icon-theme.activeIconPack": "nest",
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit",
+        "source.organizeImports": "explicit"
+    },
+    "editor.formatOnSave": true,
+    "editor.detectIndentation": false,
+    "editor.tabSize": 4,
+    "typescript.tsdk": "node_modules/typescript/lib",
+}

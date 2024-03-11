@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: ./files/Dockerfile.postgres
+    restart: always
+    container_name: clinic_db
+    environment:
+      POSTGRES_USER: $PG_USER
+      POSTGRES_PASSWORD: $PG_PASSWORD
+      POSTGRES_DB: $PG_DB
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - clinic_network
+
+volumes:
+  postgres:
+    name: postgres_data
+    driver: local
+
+networks:
+  clinic_network:
+    driver: bridge

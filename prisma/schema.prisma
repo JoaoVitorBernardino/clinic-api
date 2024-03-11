@@ -1,0 +1,89 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model roles {
+    id         String   @id @default(uuid())
+    name       String
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now()) @updatedAt
+    is_deleted Boolean  @default(false)
+    users      users[]
+}
+
+model users {
+    id           String              @id @default(uuid())
+    username     String
+    email        String              @unique
+    password     String
+    commission   Decimal?            @db.Decimal(3, 2)
+    created_at   DateTime            @default(now())
+    updated_at   DateTime            @default(now()) @updatedAt
+    is_deleted   Boolean             @default(false)
+    role         roles               @relation(fields: [role_id], references: [id])
+    role_id      String
+    client       customer_services[] @relation("client")
+    professional customer_services[] @relation("professional")
+}
+
+model customer_services {
+    id                String              @id @default(uuid())
+    started_at        DateTime?           @db.Time(0)
+    fineshed_at       DateTime?           @db.Time(0)
+    created_at        DateTime            @default(now())
+    updated_at        DateTime            @default(now()) @updatedAt
+    is_deleted        Boolean             @default(false)
+    client            users               @relation("client", fields: [client_id], references: [id])
+    client_id         String
+    professional      users               @relation("professional", fields: [professional_id], references: [id])
+    professional_id   String
+    selected_services selected_services[]
+}
+
+model clinics {
+    id              String            @id @default(uuid())
+    name            String
+    created_at      DateTime          @default(now())
+    updated_at      DateTime          @default(now()) @updatedAt
+    is_deleted      Boolean           @default(false)
+    clinic_services clinic_services[]
+}
+
+model services {
+    id              String            @id @default(uuid())
+    name            String
+    price           Decimal           @db.Decimal(5, 2)
+    estimated_time  Int               @db.Integer
+    created_at      DateTime          @default(now())
+    updated_at      DateTime          @default(now()) @updatedAt
+    is_deleted      Boolean           @default(false)
+    clinic_services clinic_services[]
+}
+
+model clinic_services {
+    id                String              @id @default(uuid())
+    clinic            clinics             @relation(fields: [clinic_id], references: [id])
+    clinic_id         String
+    service           services            @relation(fields: [service_id], references: [id])
+    service_id        String
+    created_at        DateTime            @default(now())
+    updated_at        DateTime            @default(now()) @updatedAt
+    is_deleted        Boolean             @default(false)
+    selected_services selected_services[]
+}
+
+model selected_services {
+    id                  String            @id @default(uuid())
+    clinic_service      clinic_services   @relation(fields: [clinic_service_id], references: [id])
+    clinic_service_id   String
+    customer_service    customer_services @relation(fields: [customer_service_id], references: [id])
+    customer_service_id String
+    created_at          DateTime          @default(now())
+    updated_at          DateTime          @default(now()) @updatedAt
+    is_deleted          Boolean           @default(false)
+}
