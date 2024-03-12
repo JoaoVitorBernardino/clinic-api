@@ -12,8 +12,8 @@ export class AuthService {
         private jwtService: JwtService,
     ) { }
 
-    async login(username: string, password: string) {
-        const user = await this.usersService.findOneByEmail(username);
+    async login(email: string, password: string) {
+        const user = await this.usersService.findOneByEmail(email);
 
         if ((await compare(password, user.password)) == false) {
             throw new UnauthorizedException();
@@ -50,7 +50,7 @@ export class AuthService {
     async createRefreshToken(payload) {
         const jti = randomUUID();
 
-        return this.jwtService.signAsync({ payload: payload, jti: jti }, { expiresIn: '7d' });
+        return this.jwtService.signAsync({ payload: payload, jti: jti }, { expiresIn: '2h' });
     }
 
     decodeRefreshToken(refreshToken: string) {
@@ -63,15 +63,13 @@ export class AuthService {
 
     async replaceRefreshToken(oldToken: string) {
         const decoded = await this.decodeRefreshToken(oldToken);
-        console.log(decoded.payload)
-        return this.createRefreshToken(decoded.payload)
+
+        return this.createRefreshToken(decoded.payload);
     }
 
     async refreshAcessToken(refreshToken: string) {
         const decoded = this.decodeRefreshToken(refreshToken);
 
-        return {
-            access_token: this.jwtService.sign({ payload: decoded.payload, jti: decoded.jti }),
-        };
+        return this.jwtService.sign({ payload: decoded.payload, jti: decoded.jti });
     }
 }

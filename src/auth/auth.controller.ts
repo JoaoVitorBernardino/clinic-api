@@ -4,11 +4,10 @@ import {
     HttpCode,
     HttpStatus,
     Post,
-    Req,
     Res
 } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
@@ -28,30 +27,17 @@ export class AuthController {
     async login(@Res() res: Response, @Body() LoginDTO: LoginDTO) {
         const auth = await this.authService.login(LoginDTO.email, LoginDTO.password);
 
-        res.cookie('refresh_token', auth.refresh_token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict'
-        });
-
         return res.send({ access_token: auth.access_token, refresh_token: auth.refresh_token });
-
     }
 
     @Post('refresh')
-    async refresh(@Res() res: Response, @Req() req: Request) {
-        const oldRefreshToken = req['body']['refresh_token'];
+    async refresh(@Res() res: Response, @Body() body) {
+        const oldRefreshToken = body.refresh_token;
 
         const newAccessToken = await this.authService.refreshAcessToken(oldRefreshToken);
         const newRefreshToken = await this.authService.replaceRefreshToken(oldRefreshToken);
 
-        res.cookie('refresh_token', newRefreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'strict'
-        });
-
-        return res.send(newAccessToken);
+        return res.send({ access_token: newAccessToken, refresh_token: newRefreshToken });
     }
 
     @Public()
