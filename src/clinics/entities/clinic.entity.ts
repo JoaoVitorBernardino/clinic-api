@@ -7,12 +7,12 @@ export class ClinicEntity {
     @ApiProperty()
     name: string;
 
-    @ApiProperty()
+    @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
     created_at: Date;
 
-    @ApiProperty()
+    @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
     updated_at: Date;
 
-    @ApiProperty()
+    @ApiProperty({ default: false })
     is_delete: boolean;
 }

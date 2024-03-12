@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateCustomerServiceDto } from './dto/create-customer_service.dto';
 import { UpdateCustomerServiceDto } from './dto/update-customer_service.dto';
 
 @Injectable()
 export class CustomerServicesService {
-  create(createCustomerServiceDto: CreateCustomerServiceDto) {
-    return 'This action adds a new customerService';
-  }
+    constructor(private prisma: PrismaService) { }
 
-  findAll() {
-    return `This action returns all customerServices`;
-  }
+    create(createCustomerServiceDto: CreateCustomerServiceDto) {
+        return this.prisma.customer_services.create({ data: createCustomerServiceDto });
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} customerService`;
-  }
+    findAll() {
+        return this.prisma.customer_services.findMany({ where: { is_deleted: false } });
+    }
 
-  update(id: number, updateCustomerServiceDto: UpdateCustomerServiceDto) {
-    return `This action updates a #${id} customerService`;
-  }
+    findOne(id: string) {
+        return this.prisma.customer_services.findUniqueOrThrow({
+            where: { id }
+        }).catch(() => {
+            throw new NotFoundException('not found customer service');
+        });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} customerService`;
-  }
+    update(id: string, updateCustomerServiceDto: UpdateCustomerServiceDto) {
+        return this.prisma.customer_services.update({
+            where: { id },
+            data: updateCustomerServiceDto
+        });
+    }
+
+    remove(id: string) {
+        return this.prisma.customer_services.update({
+            where: { id },
+            data: { is_deleted: true }
+        });
+    }
 }

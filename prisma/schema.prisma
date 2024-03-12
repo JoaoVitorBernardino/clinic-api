@@ -8,7 +8,7 @@ datasource db {
 }
 
 model roles {
-    id         String   @id @default(uuid())
+    id         String   @id @default(uuid()) @db.Uuid
     name       String
     created_at DateTime @default(now())
     updated_at DateTime @default(now()) @updatedAt
@@ -17,7 +17,7 @@ model roles {
 }
 
 model users {
-    id           String              @id @default(uuid())
+    id           String              @id @default(uuid()) @db.Uuid
     username     String
     email        String              @unique
     password     String
@@ -26,27 +26,27 @@ model users {
     updated_at   DateTime            @default(now()) @updatedAt
     is_deleted   Boolean             @default(false)
     role         roles               @relation(fields: [role_id], references: [id])
-    role_id      String
+    role_id      String              @db.Uuid
     client       customer_services[] @relation("client")
     professional customer_services[] @relation("professional")
 }
 
 model customer_services {
-    id                String              @id @default(uuid())
-    started_at        DateTime?           @db.Time(0)
-    fineshed_at       DateTime?           @db.Time(0)
+    id                String              @id @default(uuid()) @db.Uuid
+    started_at        DateTime?
+    fineshed_at       DateTime?
     created_at        DateTime            @default(now())
     updated_at        DateTime            @default(now()) @updatedAt
     is_deleted        Boolean             @default(false)
     client            users               @relation("client", fields: [client_id], references: [id])
-    client_id         String
+    client_id         String              @db.Uuid
     professional      users               @relation("professional", fields: [professional_id], references: [id])
-    professional_id   String
+    professional_id   String              @db.Uuid
     selected_services selected_services[]
 }
 
 model clinics {
-    id              String            @id @default(uuid())
+    id              String            @id @default(uuid()) @db.Uuid
     name            String
     created_at      DateTime          @default(now())
     updated_at      DateTime          @default(now()) @updatedAt
@@ -55,7 +55,7 @@ model clinics {
 }
 
 model services {
-    id              String            @id @default(uuid())
+    id              String            @id @default(uuid()) @db.Uuid
     name            String
     price           Decimal           @db.Decimal(5, 2)
     estimated_time  Int               @db.Integer
@@ -66,11 +66,11 @@ model services {
 }
 
 model clinic_services {
-    id                String              @id @default(uuid())
+    id                String              @id @default(uuid()) @db.Uuid
     clinic            clinics             @relation(fields: [clinic_id], references: [id])
-    clinic_id         String
+    clinic_id         String              @db.Uuid
     service           services            @relation(fields: [service_id], references: [id])
-    service_id        String
+    service_id        String              @db.Uuid
     created_at        DateTime            @default(now())
     updated_at        DateTime            @default(now()) @updatedAt
     is_deleted        Boolean             @default(false)
@@ -78,11 +78,11 @@ model clinic_services {
 }
 
 model selected_services {
-    id                  String            @id @default(uuid())
+    id                  String            @id @default(uuid()) @db.Uuid
     clinic_service      clinic_services   @relation(fields: [clinic_service_id], references: [id])
-    clinic_service_id   String
+    clinic_service_id   String            @db.Uuid
     customer_service    customer_services @relation(fields: [customer_service_id], references: [id])
-    customer_service_id String
+    customer_service_id String            @db.Uuid
     created_at          DateTime          @default(now())
     updated_at          DateTime          @default(now()) @updatedAt
     is_deleted          Boolean           @default(false)

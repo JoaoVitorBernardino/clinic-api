@@ -17,15 +17,15 @@ export class UserEntity {
     @ApiProperty()
     commission: Decimal | null;
 
-    @ApiProperty()
+    @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
     created_at: Date;
 
-    @ApiProperty()
+    @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
     updated_at: Date;
 
     @ApiProperty()
     role_id: string;
 
-    @ApiProperty()
+    @ApiProperty({ default: false })
     is_deleted: boolean;
 }
