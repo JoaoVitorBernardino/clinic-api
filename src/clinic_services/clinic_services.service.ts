@@ -1,26 +1,39 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClinicServiceDto } from './dto/create-clinic_service.dto';
 import { UpdateClinicServiceDto } from './dto/update-clinic_service.dto';
 
 @Injectable()
 export class ClinicServicesService {
-  create(createClinicServiceDto: CreateClinicServiceDto) {
-    return 'This action adds a new clinicService';
-  }
+    constructor(private prisma: PrismaService) { }
 
-  findAll() {
-    return `This action returns all clinicServices`;
-  }
+    create(createClinicServiceDto: CreateClinicServiceDto) {
+        return this.prisma.clinic_services.create({ data: createClinicServiceDto });
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} clinicService`;
-  }
+    findAll(clinic_id) {
+        return this.prisma.clinic_services.findMany({ where: { is_deleted: false, clinic_id } });
+    }
 
-  update(id: number, updateClinicServiceDto: UpdateClinicServiceDto) {
-    return `This action updates a #${id} clinicService`;
-  }
+    findOne(id: string) {
+        return this.prisma.clinic_services.findUniqueOrThrow({
+            where: { id }
+        }).catch(() => {
+            throw new NotFoundException('not found clinic  service');
+        });
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} clinicService`;
-  }
+    update(id: string, updateClinicServiceDto: UpdateClinicServiceDto) {
+        return this.prisma.clinic_services.update({
+            where: { id },
+            data: updateClinicServiceDto
+        });
+    }
+
+    remove(id: string) {
+        return this.prisma.clinic_services.update({
+            where: { id },
+            data: { is_deleted: true }
+        });
+    }
 }
