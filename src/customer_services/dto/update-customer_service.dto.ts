@@ -7,7 +7,7 @@ export class UpdateCustomerServiceDto extends PartialType(CreateCustomerServiceD
     started_at: Date;
 
     @ApiProperty({ default: '2024-01-01T00:00:00.000Z' })
-    fineshed_at: Date;
+    finished_at: Date;
 
     @ApiProperty()
     client_id: string;

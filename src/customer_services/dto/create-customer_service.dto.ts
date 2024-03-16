@@ -5,7 +5,7 @@ export class CreateCustomerServiceDto {
     started_at: Date | null;
 
     @ApiProperty({ default: '2024-01-01T00:00:00Z' })
-    fineshed_at: Date | null;
+    finished_at: Date | null;
 
     @ApiProperty()
     client_id: string;
