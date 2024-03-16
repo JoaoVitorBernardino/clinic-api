@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CustomerServicesService } from './customer_services.service';
 import { CreateCustomerServiceDto } from './dto/create-customer_service.dto';
+import { SummaryDTO } from './dto/summary.dto';
 import { UpdateCustomerServiceDto } from './dto/update-customer_service.dto';
 import { CustomerServiceEntity } from './entities/customer_service.entity';
 
@@ -33,6 +34,14 @@ export class CustomerServicesController {
     @ApiBearerAuth()
     findOne(@Param('id') id: string) {
         return this.customerServicesService.findOne(id);
+    }
+
+    @Get(':id/summary')
+    @ApiOperation({ summary: 'Route responsible for searching for a customer service summary by ID' })
+    @ApiOkResponse({ type: SummaryDTO })
+    @ApiBearerAuth()
+    summary(@Param('id') id: string) {
+        return this.customerServicesService.summary(id);
     }
 
     @Patch(':id')
