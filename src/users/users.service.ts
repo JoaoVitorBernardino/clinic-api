@@ -1,11 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-    constructor(private prisma: PrismaService) { }
+    constructor(
+        private prisma: PrismaService,
+        private jwtService: JwtService) { }
 
     async create(createUserDto: CreateUserDto) {
         return this.prisma.users.create({
@@ -39,6 +42,24 @@ export class UsersService {
         return this.prisma.users.findUniqueOrThrow({
             where: { email },
             include: { role: true }
+        });
+    }
+
+    profile(token: string) {
+        const decoded = this.jwtService.verify(token.split(' ')[1]);
+
+        return this.prisma.users.findUniqueOrThrow({
+            where: {
+                id: decoded.payload.sub,
+            },
+            select: { //TODO: avaliar quais campos terão que ser retornados
+                username: true,
+                email: true,
+                commission: true,
+                created_at: true,
+                updated_at: true,
+                role_id: true
+            },
         });
     }
 

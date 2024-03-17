@@ -16,8 +16,7 @@ export class UsersController {
     findProfile(@Req() req: Request) {
         const token = req.headers['authorization'];
 
-
-        return this.usersService.findOneByEmailWithRole(token);
+        return this.usersService.profile(token);
     }
 
     @Get()
