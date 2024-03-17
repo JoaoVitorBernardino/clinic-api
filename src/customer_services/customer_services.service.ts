@@ -16,9 +16,10 @@ export class CustomerServicesService {
         return this.prisma.customer_services.findMany({ where: { is_deleted: false } });
     }
 
-    findOne(id: string) {
+    findOne(id: string, nested: boolean = false) {
         return this.prisma.customer_services.findUniqueOrThrow({
-            where: { id }
+            where: { id },
+            include: { selected_services: nested }
         }).catch(() => {
             throw new NotFoundException('not found customer service');
         });
@@ -43,13 +44,17 @@ export class CustomerServicesService {
 
         let summaryDTO: SummaryDTO = {
             commission_value: 0,
-            total_duration_of_service: 0
+            total_duration_of_service: 0,
+            estimated_time: 0
         };
 
         if (customerService && selectedServices) {
+            summaryDTO.estimated_time = selectedServices.reduce((total, data) => total + data.estimated_time, 0)
+
             summaryDTO.total_duration_of_service = this.calculateMinutesPassed(customerService.started_at, customerService.finished_at);
 
-            summaryDTO.commission_value = this.sumPrices(selectedServices) * Number(customerService.professional.commission);
+            const commission = this.sumPrices(selectedServices) * Number(customerService.professional.commission);
+            summaryDTO.commission_value = Number(commission.toFixed(2));
         } else {
             throw new NotFoundException('not found customer service summary');
         }
@@ -62,6 +67,28 @@ export class CustomerServicesService {
             where: { id },
             data: updateCustomerServiceDto
         });
+    }
+
+    start(id: string) {
+        return this.prisma.customer_services.update({
+            where: { id },
+            data: {
+                started_at: new Date(),
+            },
+        });
+    }
+
+    async finish(id: string) {
+        await this.prisma.customer_services.update({
+            where: { id },
+            data: {
+                finished_at: new Date()
+            },
+        }).catch(() => {
+            throw new NotFoundException('not found customer service');
+        });
+
+        return this.summary(id);
     }
 
     remove(id: string) {
@@ -80,6 +107,6 @@ export class CustomerServicesService {
     }
 
     private sumPrices(services: any[]): number {
-        return services.reduce((total, service) => total + service.price, 0);
+        return services.reduce((total: number, service) => total + Number(service.price), 0);
     }
 }

@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseBoolPipe, Patch, Post, Query } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomerServicesService } from './customer_services.service';
 import { CreateCustomerServiceDto } from './dto/create-customer_service.dto';
 import { SummaryDTO } from './dto/summary.dto';
@@ -31,9 +31,10 @@ export class CustomerServicesController {
     @Get(':id')
     @ApiOperation({ summary: 'Route responsible for searching for a customer service by ID' })
     @ApiOkResponse({ type: CustomerServiceEntity })
+    @ApiQuery({ name: 'nested', required: false })
     @ApiBearerAuth()
-    findOne(@Param('id') id: string) {
-        return this.customerServicesService.findOne(id);
+    findOne(@Param('id') id: string, @Query('nested', new ParseBoolPipe({ optional: true })) nested: boolean) {
+        return this.customerServicesService.findOne(id, nested);
     }
 
     @Get(':id/summary')
@@ -51,6 +52,23 @@ export class CustomerServicesController {
     @ApiBearerAuth()
     update(@Param('id') id: string, @Body() updateCustomerServiceDto: UpdateCustomerServiceDto) {
         return this.customerServicesService.update(id, updateCustomerServiceDto);
+    }
+
+    @Patch(':id/start')
+    @ApiOperation({ summary: 'Route responsible for starting customer service' })
+    @ApiNoContentResponse()
+    @ApiBearerAuth()
+    @HttpCode(HttpStatus.NO_CONTENT)
+    start(@Param('id') id: string) {
+        return this.customerServicesService.start(id);
+    }
+
+    @Patch(':id/finish')
+    @ApiOperation({ summary: 'Route responsible for finishing customer service' })
+    @ApiNoContentResponse()
+    @ApiBearerAuth()
+    finish(@Param('id') id: string) {
+        return this.customerServicesService.finish(id);
     }
 
     @Delete(':id')

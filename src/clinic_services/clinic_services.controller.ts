@@ -22,8 +22,8 @@ export class ClinicServicesController {
     @Get()
     @ApiOperation({ summary: 'Route responsible for searching all clinic services' })
     @ApiOkResponse({ type: ClinicServiceEntity, isArray: true })
-    @ApiBearerAuth()
     @ApiQuery({ name: 'clinic_id', required: false })
+    @ApiBearerAuth()
     findAll(@Query('clinic_id') clinic_id: string) {
         return this.clinicServicesService.findAll(clinic_id);
     }

@@ -6,4 +6,7 @@ export class SummaryDTO {
 
     @ApiProperty()
     commission_value: number;
+
+    @ApiProperty()
+    estimated_time: number;
 }
