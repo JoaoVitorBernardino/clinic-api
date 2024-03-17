@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ClinicServicesService } from './clinic_services.service';
 import { CreateClinicServiceDto } from './dto/create-clinic_service.dto';
@@ -24,7 +24,7 @@ export class ClinicServicesController {
     @ApiOkResponse({ type: ClinicServiceEntity, isArray: true })
     @ApiQuery({ name: 'clinic_id', required: false })
     @ApiBearerAuth()
-    findAll(@Query('clinic_id') clinic_id: string) {
+    findAll(@Query('clinic_id', new ParseUUIDPipe({ optional: true })) clinic_id: string) {
         return this.clinicServicesService.findAll(clinic_id);
     }
 
@@ -32,7 +32,7 @@ export class ClinicServicesController {
     @ApiOperation({ summary: 'Route responsible for searching for a clinic service by ID' })
     @ApiOkResponse({ type: ClinicServiceEntity })
     @ApiBearerAuth()
-    findOne(@Param('id') id: string) {
+    findOne(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.clinicServicesService.findOne(id);
     }
 
@@ -41,7 +41,7 @@ export class ClinicServicesController {
     @ApiOkResponse({ type: ClinicServiceEntity })
     @ApiBody({ type: UpdateClinicServiceDto })
     @ApiBearerAuth()
-    update(@Param('id') id: string, @Body() updateClinicServiceDto: UpdateClinicServiceDto) {
+    update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateClinicServiceDto: UpdateClinicServiceDto) {
         return this.clinicServicesService.update(id, updateClinicServiceDto);
     }
 
@@ -50,7 +50,7 @@ export class ClinicServicesController {
     @ApiNoContentResponse()
     @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(@Param('id') id: string) {
+    remove(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.clinicServicesService.remove(id);
     }
 }

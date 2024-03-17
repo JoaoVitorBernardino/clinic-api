@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ClinicsService } from './clinics.service';
 import { CreateClinicDto } from './dto/create-clinic.dto';
@@ -31,7 +31,7 @@ export class ClinicsController {
     @ApiOperation({ summary: 'Route responsible for searching for a clinic by ID' })
     @ApiOkResponse({ type: ClinicEntity })
     @ApiBearerAuth()
-    findOne(@Param('id') id: string) {
+    findOne(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.clinicsService.findOne(id);
     }
 
@@ -40,7 +40,7 @@ export class ClinicsController {
     @ApiOkResponse({ type: ClinicEntity })
     @ApiBody({ type: UpdateClinicDto })
     @ApiBearerAuth()
-    update(@Param('id') id: string, @Body() updateClinicDto: UpdateClinicDto) {
+    update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateClinicDto: UpdateClinicDto) {
         return this.clinicsService.update(id, updateClinicDto);
     }
 
@@ -49,7 +49,7 @@ export class ClinicsController {
     @ApiNoContentResponse()
     @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(@Param('id') id: string) {
+    remove(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.clinicsService.remove(id);
     }
 }

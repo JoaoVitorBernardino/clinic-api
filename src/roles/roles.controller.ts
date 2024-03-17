@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -30,7 +30,7 @@ export class RolesController {
     @ApiOperation({ summary: 'Route responsible for searching for a role by ID' })
     @ApiOkResponse({ type: RoleEntity })
     @ApiBearerAuth()
-    findOne(@Param('id') id: string) {
+    findOne(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.rolesService.findOne(id);
     }
 
@@ -38,7 +38,7 @@ export class RolesController {
     @ApiOperation({ summary: 'Route responsible for updating a role by ID' })
     @ApiOkResponse({ type: RoleEntity })
     @ApiBearerAuth()
-    update(@Param('id') id: string, @Body() updateRoleDto: UpdateRoleDto) {
+    update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateRoleDto: UpdateRoleDto) {
         return this.rolesService.update(id, updateRoleDto);
     }
 
@@ -47,7 +47,7 @@ export class RolesController {
     @ApiNoContentResponse()
     @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(@Param('id') id: string) {
+    remove(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.rolesService.remove(id);
     }
 }

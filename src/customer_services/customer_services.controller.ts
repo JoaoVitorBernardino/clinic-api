@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseBoolPipe, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseBoolPipe, ParseUUIDPipe, Patch, Post, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomerServicesService } from './customer_services.service';
 import { CreateCustomerServiceDto } from './dto/create-customer_service.dto';
@@ -33,7 +33,7 @@ export class CustomerServicesController {
     @ApiOkResponse({ type: CustomerServiceEntity })
     @ApiQuery({ name: 'nested', required: false })
     @ApiBearerAuth()
-    findOne(@Param('id') id: string, @Query('nested', new ParseBoolPipe({ optional: true })) nested: boolean) {
+    findOne(@Param('id', new ParseUUIDPipe()) id: string, @Query('nested', new ParseBoolPipe({ optional: true })) nested: boolean) {
         return this.customerServicesService.findOne(id, nested);
     }
 
@@ -41,7 +41,7 @@ export class CustomerServicesController {
     @ApiOperation({ summary: 'Route responsible for searching for a customer service summary by ID' })
     @ApiOkResponse({ type: SummaryDTO })
     @ApiBearerAuth()
-    summary(@Param('id') id: string) {
+    summary(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.customerServicesService.summary(id);
     }
 
@@ -50,7 +50,7 @@ export class CustomerServicesController {
     @ApiOkResponse({ type: CustomerServiceEntity })
     @ApiBody({ type: UpdateCustomerServiceDto })
     @ApiBearerAuth()
-    update(@Param('id') id: string, @Body() updateCustomerServiceDto: UpdateCustomerServiceDto) {
+    update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateCustomerServiceDto: UpdateCustomerServiceDto) {
         return this.customerServicesService.update(id, updateCustomerServiceDto);
     }
 
@@ -59,7 +59,7 @@ export class CustomerServicesController {
     @ApiNoContentResponse()
     @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
-    start(@Param('id') id: string) {
+    start(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.customerServicesService.start(id);
     }
 
@@ -67,7 +67,7 @@ export class CustomerServicesController {
     @ApiOperation({ summary: 'Route responsible for finishing customer service' })
     @ApiNoContentResponse()
     @ApiBearerAuth()
-    finish(@Param('id') id: string) {
+    finish(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.customerServicesService.finish(id);
     }
 
@@ -76,7 +76,7 @@ export class CustomerServicesController {
     @ApiNoContentResponse()
     @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(@Param('id') id: string) {
+    remove(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.customerServicesService.remove(id);
     }
 }

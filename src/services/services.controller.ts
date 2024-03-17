@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
@@ -30,7 +30,7 @@ export class ServicesController {
     @ApiOperation({ summary: 'Route responsible for searching for a service by ID' })
     @ApiOkResponse({ type: ServiceEntinty })
     @ApiBearerAuth()
-    findOne(@Param('id') id: string) {
+    findOne(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.servicesService.findOne(id);
     }
 
@@ -38,7 +38,7 @@ export class ServicesController {
     @ApiOperation({ summary: 'Route responsible for updating a service by ID' })
     @ApiOkResponse({ type: ServiceEntinty })
     @ApiBearerAuth()
-    update(@Param('id') id: string, @Body() updateServiceDto: UpdateServiceDto) {
+    update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateServiceDto: UpdateServiceDto) {
         return this.servicesService.update(id, updateServiceDto);
     }
 
@@ -47,7 +47,7 @@ export class ServicesController {
     @ApiNoContentResponse()
     @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(@Param('id') id: string) {
+    remove(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.servicesService.remove(id);
     }
 }

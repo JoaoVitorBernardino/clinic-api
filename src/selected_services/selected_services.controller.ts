@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateSelectedServiceDto } from './dto/create-selected_service.dto';
 import { UpdateSelectedServiceDto } from './dto/update-selected_service.dto';
@@ -31,7 +31,7 @@ export class SelectedServicesController {
     @ApiOperation({ summary: 'Route responsible for searching for a selected services by ID' })
     @ApiOkResponse({ type: SelectedServiceEntity })
     @ApiBearerAuth()
-    findOne(@Param('id') id: string) {
+    findOne(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.selectedServicesService.findOne(id);
     }
 
@@ -40,7 +40,7 @@ export class SelectedServicesController {
     @ApiOkResponse({ type: SelectedServiceEntity })
     @ApiBody({ type: UpdateSelectedServiceDto })
     @ApiBearerAuth()
-    update(@Param('id') id: string, @Body() updateSelectedServiceDto: UpdateSelectedServiceDto) {
+    update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateSelectedServiceDto: UpdateSelectedServiceDto) {
         return this.selectedServicesService.update(id, updateSelectedServiceDto);
     }
 
@@ -49,7 +49,7 @@ export class SelectedServicesController {
     @ApiNoContentResponse()
     @ApiBearerAuth()
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(@Param('id') id: string) {
+    remove(@Param('id', new ParseUUIDPipe()) id: string) {
         return this.selectedServicesService.remove(id);
     }
 }
