@@ -1,8 +1,10 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Patch, Post } from '@nestjs/common';
 import { ApiBearerAuth, ApiCreatedResponse, ApiNoContentResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles } from './decorators/roles.decorator';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleEntity } from './entities/role.entity';
+import { Role } from './role.enum';
 import { RolesService } from './roles.service';
 
 @Controller('roles')
@@ -11,6 +13,7 @@ export class RolesController {
     constructor(private readonly rolesService: RolesService) { }
 
     @Post()
+    @Roles(Role.Admin)
     @ApiOperation({ summary: 'Route responsible for creating a role' })
     @ApiCreatedResponse({ type: RoleEntity })
     @ApiBearerAuth()

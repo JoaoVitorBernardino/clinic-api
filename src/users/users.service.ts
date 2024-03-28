@@ -32,7 +32,8 @@ export class UsersService {
 
     findOneByEmail(email: string) {
         return this.prisma.users.findUniqueOrThrow({
-            where: { email }
+            where: { email },
+            include: { role: true }
         }).catch(() => {
             throw new NotFoundException('not found user');
         });
